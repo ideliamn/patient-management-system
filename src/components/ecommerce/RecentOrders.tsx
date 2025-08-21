@@ -23,6 +23,7 @@ import DefaultModal from "../example/ModalExample/DefaultModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import MultiSelect from "../form/MultiSelect";
+import Loading from "../common/Loading";
 
 // Define the TypeScript interface for the table rows
 interface Product {
@@ -55,6 +56,7 @@ interface Kamar {
 }
 
 export default function RecentOrders() {
+  const [loading, setLoading] = useState(true);
   const [pasien, setPasien] = useState<Pasien[]>([]);
   const [openModalAdd, setOpenModalAdd] = useState(false);
   const closeModalAdd = () => { setOpenModalAdd(false) };
@@ -83,7 +85,7 @@ export default function RecentOrders() {
     setKamar(value);
   };
   const handleSave = async () => {
-    console.log("Saving changes...");
+    setLoading(true);
     console.log("formData: ", formData)
     const res = await fetch("/api/pasien", {
       method: "POST",
@@ -91,35 +93,44 @@ export default function RecentOrders() {
       body: JSON.stringify(formData),
     });
     if (res.ok) {
-      setOpenModalSuccess(true)
+      setLoading(false);
+      setOpenModalSuccess(true);
     } else {
-
+      setOpenModalFailed(true);
     }
     closeModalAdd();
   };
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
-      // get pasien
-      const getPasien = await fetch("/api/pasien");
-      const dataPasien = await getPasien.json();
-      setPasien(dataPasien);
-      console.log("data pasien setelah setPasien: ",pasien)
+      try {
+        // get pasien
+        const getPasien = await fetch("/api/pasien");
+        const dataPasien = await getPasien.json();
+        setPasien(dataPasien);
+        console.log("data pasien setelah setPasien: ",pasien)
 
-      // get kamar
-      const getKamar = await fetch("/api/kamar");
-      const dataKamar: Kamar[] = await getKamar.json();
-      const formattedOptions = dataKamar.map((k) => ({
-        value: String(k.id), // bisa id atau kode unik
-        label: k.nama,       // apa yang ditampilkan di dropdown
-      }));
-      setOptions(formattedOptions);
+        // get kamar
+        const getKamar = await fetch("/api/kamar");
+        const dataKamar: Kamar[] = await getKamar.json();
+        const formattedOptions = dataKamar.map((k) => ({
+          value: String(k.id),
+          label: k.nama, 
+        }));
+        setOptions(formattedOptions);
+      }  catch (err) {
+        console.error("Error fetch data:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
   
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+      {loading && <Loading />}
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
@@ -278,15 +289,10 @@ export default function RecentOrders() {
               <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90 sm:text-title-sm">
                 Berhasil menambahkan pasien
               </h4>
-              {/* <p className="text-sm leading-6 text-gray-500 dark:text-gray-400">
-                Lorem ipsum dolor sit amet consectetur. Feugiat ipsum libero tempor
-                felis risus nisi non. Quisque eu ut tempor curabitur.
-              </p> */}
-
               <div className="flex items-center justify-center w-full gap-3 mt-7">
                 <button
                   type="button"
-                  className="flex justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-success-500 shadow-theme-xs hover:bg-success-600 sm:w-auto"
+                  className="flex justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-success-500 shadow-theme-xs hover:bg-success-600 sm:w-auto" onClick={closeModalSuccess}
                 >
                   Tutup
                 </button>
@@ -336,15 +342,10 @@ export default function RecentOrders() {
                 <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90 sm:text-title-sm">
                   Gagal menambahkan pasien
                 </h4>
-                {/* <p className="text-sm leading-6 text-gray-500 dark:text-gray-400">
-                  Lorem ipsum dolor sit amet consectetur. Feugiat ipsum libero tempor
-                  felis risus nisi non. Quisque eu ut tempor curabitur.
-                </p> */}
-      
                 <div className="flex items-center justify-center w-full gap-3 mt-7">
                   <button
                     type="button"
-                    className="flex justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-error-500 shadow-theme-xs hover:bg-error-600 sm:w-auto"
+                    className="flex justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-error-500 shadow-theme-xs hover:bg-error-600 sm:w-auto" onClick={closeModalSuccess}
                   >
                     Tutup
                   </button>
@@ -411,22 +412,31 @@ export default function RecentOrders() {
           </TableHeader>
 
           {/* Table Body */}
-
-          <TableBody>
+          <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
             {pasien.map((p) => (
               <TableRow key={p.id}>
-                <TableCell>{p.no_rekam_medis}</TableCell>
-                <TableCell>{p.nama}</TableCell>
-                <TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {p.no_rekam_medis}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {p.nama}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                   {moment(new Date(p.tgl_masuk)).format("DD-MM-YYYY HH:mm")}
                 </TableCell>
-                <TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                   {moment(new Date(p.tgl_lahir)).format("DD-MM-YYYY")}
                 </TableCell>
-                <TableCell>{p.dpjp}</TableCell>
-                <TableCell>{p.ppja}</TableCell>
-                <TableCell>{p.master_kamar.nama}</TableCell>
-                <TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {p.dpjp}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {p.ppja}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                  {p.master_kamar.nama}
+                </TableCell>
+                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                   <Badge
                     size="sm"
                     color={

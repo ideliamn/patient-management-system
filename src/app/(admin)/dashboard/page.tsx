@@ -56,10 +56,6 @@ export default function Pasien() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  const handleSelectKamar = (value: string) => {
-    console.log("Selected value kamar:", value);
-    setKamar(value);
-  };
   const handleSave = async () => {
     setLoading(true);
     console.log("formData: ", formData)
@@ -95,7 +91,6 @@ export default function Pasien() {
         const getPasien = await fetch("/api/pasien");
         const dataPasien = await getPasien.json();
         setPasien(dataPasien);
-        console.log("data pasien setelah setPasien: ",pasien)
 
         // get kamar
         const getKamar = await fetch("/api/kamar");

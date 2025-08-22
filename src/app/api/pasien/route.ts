@@ -32,8 +32,6 @@ export async function POST(req: Request) {
       kamar_id: body.kamar_id
     }
 
-    console.log("insertPasien: ",insertPasien)
-
     const { data, error } = await supabase
       .from("pasien")
       .insert([insertPasien])

@@ -80,10 +80,6 @@ export default function RecentOrders() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  const handleSelectKamar = (value: string) => {
-    console.log("Selected value kamar:", value);
-    setKamar(value);
-  };
   const handleSave = async () => {
     setLoading(true);
     console.log("formData: ", formData)

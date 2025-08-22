@@ -26,7 +26,7 @@ export default function DatePicker({
   useEffect(() => {
     const flatPickr = flatpickr(`#${id}`, {
       mode: mode || "single",
-      static: true,
+      allowInput: true,
       monthSelectorType: "static",
       dateFormat: "Y-m-d",
       defaultDate,

@@ -1,41 +1,17 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import Badge from "../ui/badge/Badge";
-import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import Loading from "@/components/common/Loading";
+import DatePicker from "@/components/form/date-picker";
+import Input from "@/components/form/input/InputField";
+import Label from "@/components/form/Label";
+import Select from "@/components/form/Select";
+import Badge from "@/components/ui/badge/Badge";
+import Button from "@/components/ui/button/Button";
+import { Modal } from "@/components/ui/modal";
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
+import { TimeIcon } from "@/icons";
 import moment from "moment";
-import ComponentCard from "../common/ComponentCard";
-import { ChevronDownIcon, EyeIcon, EyeCloseIcon, TimeIcon } from "@/icons";
-import { options } from "@fullcalendar/core/preact.js";
-import DatePicker from "../form/date-picker";
-import Input from "../form/input/InputField";
-import Label from "../form/Label";
-import Select from "../form/Select";
-import Modals from "@/app/(admin)/(ui-elements)/modals/page";
-import DefaultModal from "../example/ModalExample/DefaultModal";
-import { Modal } from "../ui/modal";
-import Button from "../ui/button/Button";
-import MultiSelect from "../form/MultiSelect";
-import Loading from "../common/Loading";
-
-// Define the TypeScript interface for the table rows
-interface Product {
-  id: number; // Unique identifier for each product
-  name: string; // Product name
-  variants: string; // Number of variants (e.g., "1 Variant", "2 Variants")
-  category: string; // Category of the product
-  price: string; // Price of the product (as a string with currency symbol)
-  // status: string; // Status of the product
-  image: string; // URL or path to the product image
-  status: "Delivered" | "Pending" | "Canceled"; // Status of the product
-}
+import { useState, useEffect } from "react";
 
 interface Pasien {
   id: number;
@@ -55,7 +31,7 @@ interface Kamar {
   nama: string;
 }
 
-export default function RecentOrders() {
+export default function Pasien() {
   const [loading, setLoading] = useState(true);
   const [pasien, setPasien] = useState<Pasien[]>([]);
   const [openModalAdd, setOpenModalAdd] = useState(false);
@@ -355,7 +331,7 @@ export default function RecentOrders() {
                 <div className="flex items-center justify-center w-full gap-3 mt-7">
                   <button
                     type="button"
-                    className="flex justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-error-500 shadow-theme-xs hover:bg-error-600 sm:w-auto" onClick={closeModalSuccess}
+                    className="flex justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-error-500 shadow-theme-xs hover:bg-error-600 sm:w-auto" onClick={closeModalFailed}
                   >
                     Tutup
                   </button>

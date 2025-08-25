@@ -1,36 +1,51 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import Button from "../ui/button/Button";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const { signOut, user } = useAuth()
+  const router = useRouter()
 
-function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-  e.stopPropagation();
-  setIsOpen((prev) => !prev);
-}
+  useEffect(() => {
+    console.log("user session: ", JSON.stringify(user))
+  }, [])
+
+  function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.stopPropagation();
+    setIsOpen((prev) => !prev);
+  }
 
   function closeDropdown() {
     setIsOpen(false);
   }
 
   const handleLogout = async () => {
-    const res = await fetch("/api/auth/logout", { method: "POST" });
-    if (res.ok) {
-      console.log("User logged out");
-      // redirect ke login
-      window.location.href = "/login";
+    // const res = await fetch("/api/auth/logout", { method: "POST" });
+    // if (res.ok) {
+    //   console.log("User logged out");
+    //   // redirect ke login
+    //   window.location.href = "/login";
+    // }
+    const { error } = await signOut()
+    if (error) {
+      console.log(error)
+      return;
     }
+    // router.refresh()
+    router.push("/login")
   };
 
   return (
     <div className="relative">
       <button
-        onClick={toggleDropdown} 
+        onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
@@ -43,13 +58,12 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         </span>
 
         <span className="block mr-1 font-medium text-theme-sm">
-          
+          {user?.email}
         </span>
 
         <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
           width="18"
           height="20"
           viewBox="0 0 18 20"
@@ -73,10 +87,10 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            {/* {profile?.nama} */}
+            {user?.email}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            {/* {profile?.nip} */}
+            123456
           </span>
         </div>
 

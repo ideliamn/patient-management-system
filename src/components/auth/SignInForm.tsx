@@ -8,9 +8,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Modal } from "../ui/modal";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignInForm() {
   const router = useRouter();
+  const { signIn } = useAuth()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,21 +25,29 @@ export default function SignInForm() {
 
     setError("");
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    // const res = await fetch("/api/auth/login", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ email, password }),
+    // });
 
-    const data = await res.json();
+    // const data = await res.json();
 
-    if (res.ok) {
-      router.push("/dashboard");
-    } else {
-      setError(data.error || "Login gagal, coba lagi.");
+    // if (res.ok) {
+    //   router.push("/dashboard");
+    // } else {
+    //   setError(data.error || "Login gagal, coba lagi.");
+    //   setOpenModalFailed(true);
+    // }
+    const { error } = await signIn(email, password)
+
+    if (error) {
+      setError(error || "Login gagal, coba lagi.");
       setOpenModalFailed(true);
+    } else {
+      router.push("/dashboard")
     }
   };
 
@@ -107,7 +117,7 @@ export default function SignInForm() {
         </div>
       </div>
       {/* Modal Failed */}
-      { openModalFailed && (
+      {openModalFailed && (
         <Modal isOpen={openModalFailed} onClose={closeModalFailed} className="max-w-[600px] p-5 lg:p-10">
           <div className="text-center">
             <div className="relative flex items-center justify-center z-1 mb-7">
@@ -125,7 +135,7 @@ export default function SignInForm() {
                   fillOpacity=""
                 />
               </svg>
-  
+
               <span className="absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
                 <svg
                   className="fill-error-600 dark:fill-error-500"
@@ -144,7 +154,7 @@ export default function SignInForm() {
                 </svg>
               </span>
             </div>
-  
+
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90 sm:text-title-sm">
               Gagal login
             </h4>

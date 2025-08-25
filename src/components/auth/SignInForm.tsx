@@ -47,7 +47,7 @@ export default function SignInForm() {
       setError(error || "Login gagal, coba lagi.");
       setOpenModalFailed(true);
     } else {
-      router.push("/dashboard")
+      router.push("/pasien")
     }
   };
 

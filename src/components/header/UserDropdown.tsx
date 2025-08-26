@@ -7,14 +7,20 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import Button from "../ui/button/Button";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import ModalInfo from "../modals/ModalInfo";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { signOut, user } = useAuth()
   const router = useRouter()
+  const [openModalInfo, setOpenModalInfo] = useState(false);
+  const closeModalInfo = () => { setOpenModalInfo(false) };
 
   useEffect(() => {
     console.log("user session: ", JSON.stringify(user))
+    if (!user) {
+      setOpenModalInfo(true);
+    }
   }, [])
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -27,23 +33,31 @@ export default function UserDropdown() {
   }
 
   const handleLogout = async () => {
-    // const res = await fetch("/api/auth/logout", { method: "POST" });
-    // if (res.ok) {
-    //   console.log("User logged out");
-    //   // redirect ke login
-    //   window.location.href = "/login";
-    // }
     const { error } = await signOut()
     if (error) {
       console.log(error)
       return;
     }
-    // router.refresh()
-    router.push("/login")
+    goToLogin()
   };
+
+  const goToLogin = async () => {
+    router.push("/login")
+  }
 
   return (
     <div className="relative">
+      {/* Modal Info */}
+      {openModalInfo && (
+        <ModalInfo
+          isOpen={openModalInfo}
+          onClose={() => goToLogin()}
+          title="Silakan login"
+          message="Session habis, silakan login terlebih dahulu"
+          yesButtonText="Ya"
+          handleYes={() => goToLogin()}
+        />
+      )}
       <button
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"

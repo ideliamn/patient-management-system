@@ -8,7 +8,7 @@ const supabase = createClient(
 
 export async function GET() {
   const { data, error } = await supabase.from("pasien").select("*, master_kamar(nama)");
-  
+
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -46,3 +46,37 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+
+    const tanggalWaktuMasuk = `${body.tgl_masuk} ${body.waktu_masuk}`;
+
+    const updatePasien = {
+      no_rekam_medis: body.no_rekam_medis,
+      nama: body.nama,
+      tgl_masuk: tanggalWaktuMasuk,
+      tgl_lahir: body.tgl_lahir,
+      dpjp: body.dpjp,
+      ppja: body.ppja,
+      kamar_id: body.kamar_id
+    }
+
+    const { data, error } = await supabase
+      .from("pasien")
+      .update(updatePasien)
+      .eq("id", body.id)
+      .select();
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 400 });
+  }
+}
+
+

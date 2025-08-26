@@ -51,18 +51,22 @@ export default function ModalFormPasien({
         if (initialData) {
             setFormData(initialData);
         } else {
+            const now = new Date();
+            const today = now.toISOString().split("T")[0];
+            const timeNow = now.toTimeString().slice(0, 5);
+
             setFormData({
                 no_rekam_medis: "",
                 nama: "",
-                tgl_masuk: "",
-                waktu_masuk: "",
+                tgl_masuk: today,
+                waktu_masuk: timeNow,
                 tgl_lahir: "",
                 dpjp: "",
                 ppja: "",
                 kamar_id: "",
             });
         }
-    }, [initialData]);
+    }, [initialData, isOpen]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -75,7 +79,7 @@ export default function ModalFormPasien({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px] p-5 lg:p-10">
+        <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px] p-5 lg:p-10 transition-all duration-300">
             <h4 className="font-semibold text-gray-800 mb-7 text-title-sm dark:text-white/90">
                 {initialData ? "Edit Data" : "Tambahkan"}
             </h4>

@@ -15,6 +15,8 @@ import { TimeIcon } from "@/icons";
 import moment from "moment";
 import { useState, useEffect } from "react";
 import ModalFormPasien from "./components/modals/ModalFormPasien";
+import TablePasien from "./components/tables/TablePasien";
+import ModalWarning from "@/components/modals/ModalWarning";
 
 interface Pasien {
   id: number;
@@ -43,6 +45,8 @@ export default function Pasien() {
   const closeModalSuccess = () => { setOpenModalSuccess(false) };
   const [openModalFailed, setOpenModalFailed] = useState(false);
   const closeModalFailed = () => { setOpenModalFailed(false) };
+  const [openModalWarning, setOpenModalWarning] = useState(false);
+  const closeModalWarning = () => { setOpenModalWarning(false) };
   const [options, setOptions] = useState<{ value: string; label: string }[]>([]);
   const [formData, setFormData] = useState({
     no_rekam_medis: "",
@@ -56,33 +60,24 @@ export default function Pasien() {
   });
 
   const handleSave = async (formData: any) => {
-    // setLoading(true);
-    // console.log("formData: ", formData)
-    // const res = await fetch("/api/pasien", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(formData),
-    // });
-    // if (res.ok) {
-    //   setLoading(false);
-    setOpenModalSuccess(true);
-    // } else {
-    //   setOpenModalFailed(true);
-    // }
+    setLoading(true);
+    console.log("formData: ", formData)
+    const res = await fetch("/api/pasien", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    if (res.ok) {
+      setLoading(false);
+      setOpenModalSuccess(true);
+    } else {
+      setOpenModalFailed(true);
+    }
     closeModalAdd();
   };
 
   useEffect(() => {
     setLoading(true);
-
-    const now = new Date();
-    const today = now.toISOString().split("T")[0];
-    const time = now.toTimeString().slice(0, 5);
-    setFormData((prev) => ({
-      ...prev,
-      tgl_masuk: today,
-      waktu_masuk: time,
-    }));
 
     const fetchData = async () => {
       try {
@@ -162,7 +157,7 @@ export default function Pasien() {
             </svg>
             Tambahkan
           </button>
-          {/* Modal Form Add */}
+          {/* Modal Form Pasien */}
           {openModalAdd && (
             <ModalFormPasien
               isOpen={openModalAdd}
@@ -189,106 +184,9 @@ export default function Pasien() {
           )}
         </div>
       </div>
-      <div className="max-w-full overflow-x-auto">
-        <Table>
-          {/* Table Header */}
-          <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
-            <TableRow>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
-              >
-                Nomor Rekam Medis
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
-              >
-                Nama
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
-              >
-                Tanggal Masuk
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
-              >
-                Tanggal Lahir
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
-              >
-                Nama DPJP
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
-              >
-                Nama PPJA
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
-              >
-                Kamar
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
-              >
-                Status
-              </TableCell>
-            </TableRow>
-          </TableHeader>
-
-          {/* Table Body */}
-          <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {pasien.map((p) => (
-              <TableRow key={p.id}>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {p.no_rekam_medis}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {p.nama}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {moment(new Date(p.tgl_masuk)).format("DD-MM-YYYY HH:mm")}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {moment(new Date(p.tgl_lahir)).format("DD-MM-YYYY")}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {p.dpjp}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {p.ppja}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  {p.master_kamar.nama}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  <Badge
-                    size="sm"
-                    color={
-                      p.status === "draft"
-                        ? "warning"
-                        : p.status === "completed"
-                          ? "success"
-                          : "error"
-                    }
-                  >
-                    {p.status}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      {/* Table Pasien */}
+      {loading && <Loading />}
+      <TablePasien pasien={pasien} />
     </div>
   );
 }

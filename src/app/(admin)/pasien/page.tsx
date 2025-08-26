@@ -42,8 +42,10 @@ export default function Pasien() {
   const [pasien, setPasien] = useState<Pasien[]>([]);
   const [openModalSuccess, setOpenModalSuccess] = useState(false);
   const closeModalSuccess = () => { setOpenModalSuccess(false) };
+  const [successMessage, setSuccessMessage] = useState("");
   const [openModalFailed, setOpenModalFailed] = useState(false);
   const closeModalFailed = () => { setOpenModalFailed(false) };
+  const [failedMessage, setFailedMessage] = useState("");
   const [openModalWarning, setOpenModalWarning] = useState(false);
   const closeModalWarning = () => { setOpenModalWarning(false) };
   const [options, setOptions] = useState<{ value: string; label: string }[]>([]);
@@ -113,9 +115,11 @@ export default function Pasien() {
       body: JSON.stringify(formData),
     });
     if (res.ok) {
+      setSuccessMessage("Sukses menambahkan pasien");
       setLoading(false);
       setOpenModalSuccess(true);
     } else {
+      setFailedMessage("Gagal menambahkan pasien");
       setOpenModalFailed(true);
     }
     closeModalAdd();
@@ -156,9 +160,11 @@ export default function Pasien() {
       body: JSON.stringify(formData),
     });
     if (res.ok) {
+      setSuccessMessage("Sukses memperbarui data pasien");
       setLoading(false);
       setOpenModalSuccess(true);
     } else {
+      setFailedMessage("Gagal memperbarui pasien");
       setOpenModalFailed(true);
     }
     closeModalAdd();
@@ -176,9 +182,11 @@ export default function Pasien() {
         body: JSON.stringify(formData),
       });
       if (res.ok) {
+        setSuccessMessage("Sukses mengahapus pasien");
         setLoading(false);
         setOpenModalSuccess(true);
       } else {
+        setFailedMessage("Gagal menghapus pasien");
         setOpenModalFailed(true);
       }
       closeModalAdd();
@@ -263,7 +271,7 @@ export default function Pasien() {
             <ModalSuccess
               isOpen={openModalSuccess}
               onClose={closeModalSuccess}
-              message="Berhasil menambahkan pasien"
+              message={successMessage}
             />
           )}
           {/* Modal Failed */}
@@ -271,7 +279,7 @@ export default function Pasien() {
             <ModalFailed
               isOpen={openModalFailed}
               onClose={closeModalFailed}
-              message="Gagal menambahkan pasien"
+              message={failedMessage}
             />
           )}
           {/* Modal Warning */}

@@ -38,9 +38,8 @@ interface Kamar {
 
 export default function Pasien() {
   const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [pasien, setPasien] = useState<Pasien[]>([]);
-  const [openModalAdd, setOpenModalAdd] = useState(false);
-  const closeModalAdd = () => { setOpenModalAdd(false) };
   const [openModalSuccess, setOpenModalSuccess] = useState(false);
   const closeModalSuccess = () => { setOpenModalSuccess(false) };
   const [openModalFailed, setOpenModalFailed] = useState(false);
@@ -48,7 +47,25 @@ export default function Pasien() {
   const [openModalWarning, setOpenModalWarning] = useState(false);
   const closeModalWarning = () => { setOpenModalWarning(false) };
   const [options, setOptions] = useState<{ value: string; label: string }[]>([]);
+  const [openModalAdd, setOpenModalAdd] = useState(false);
+  const closeModalAdd = () => {
+    console.log("close modal add")
+    setFormData({
+      id: 0,
+      no_rekam_medis: "",
+      nama: "",
+      tgl_masuk: "",
+      waktu_masuk: "",
+      tgl_lahir: "",
+      dpjp: "",
+      ppja: "",
+      kamar_id: "",
+    })
+    console.log("form data, " + JSON.stringify(formData))
+    setOpenModalAdd(false)
+  };
   const [formData, setFormData] = useState({
+    id: 0,
     no_rekam_medis: "",
     nama: "",
     tgl_masuk: "",
@@ -59,24 +76,7 @@ export default function Pasien() {
     kamar_id: "",
   });
 
-  const handleSave = async (formData: any) => {
-    setLoading(true);
-    console.log("formData: ", formData)
-    const res = await fetch("/api/pasien", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-    if (res.ok) {
-      setLoading(false);
-      setOpenModalSuccess(true);
-    } else {
-      setOpenModalFailed(true);
-    }
-    closeModalAdd();
-  };
-
-  useEffect(() => {
+  const refreshTabelPasien = () => {
     setLoading(true);
 
     const fetchData = async () => {
@@ -100,7 +100,97 @@ export default function Pasien() {
         setLoading(false);
       }
     };
+
     fetchData();
+  }
+
+  const saveInsert = async (formData: any) => {
+    setLoading(true);
+    console.log("formData: ", formData)
+    const res = await fetch("/api/pasien", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    if (res.ok) {
+      setLoading(false);
+      setOpenModalSuccess(true);
+    } else {
+      setOpenModalFailed(true);
+    }
+    closeModalAdd();
+    refreshTabelPasien();
+  };
+
+  const handleEdit = async (id: number) => {
+    setLoading(true)
+    const res = await fetch(`/api/pasien/${id}`);
+    const data = await res.json();
+    const tanggalMasuk = data.tgl_masuk.split("T")[0];
+    const waktuMasuk = data.tgl_masuk.split("T")[1].slice(0, 5);
+    setFormData({
+      id: data.id,
+      no_rekam_medis: data.no_rekam_medis,
+      nama: data.nama,
+      tgl_masuk: tanggalMasuk,
+      waktu_masuk: waktuMasuk,
+      tgl_lahir: data.tgl_lahir,
+      dpjp: data.dpjp,
+      ppja: data.ppja,
+      kamar_id: data.kamar_id,
+    });
+    setOpenModalAdd(true);
+    setLoading(false)
+  }
+
+  const handleDelete = async (id: number) => {
+    setDeleteId(id);
+    setOpenModalWarning(true);
+  }
+
+  const saveUpdate = async (formData: any) => {
+    setLoading(true);
+    const res = await fetch("/api/pasien", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    if (res.ok) {
+      setLoading(false);
+      setOpenModalSuccess(true);
+    } else {
+      setOpenModalFailed(true);
+    }
+    closeModalAdd();
+    refreshTabelPasien();
+  };
+
+  const saveDelete = async () => {
+    console.log("save delete")
+    if (deleteId) {
+      console.log("delete id", deleteId)
+      setLoading(true);
+      const res = await fetch(`/api/pasien/${deleteId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setLoading(false);
+        setOpenModalSuccess(true);
+      } else {
+        setOpenModalFailed(true);
+      }
+      closeModalAdd();
+      refreshTabelPasien();
+    }
+    else {
+      console.log("gak ada delete id")
+    }
+  };
+
+  useEffect(() => {
+    refreshTabelPasien();
   }, []);
 
   return (
@@ -162,8 +252,10 @@ export default function Pasien() {
             <ModalFormPasien
               isOpen={openModalAdd}
               onClose={closeModalAdd}
-              onSave={handleSave}
+              handleInsert={saveInsert}
+              handleUpdate={saveUpdate}
               options={options}
+              initialData={formData}
             />
           )}
           {/* Modal Success */}
@@ -182,11 +274,28 @@ export default function Pasien() {
               message="Gagal menambahkan pasien"
             />
           )}
+          {/* Modal Warning */}
+          {openModalWarning && (
+            <ModalWarning
+              isOpen={openModalWarning}
+              onClose={closeModalWarning}
+              title="Apakah anda yakin?"
+              message="Ingin menghapus pasien?"
+              yesButtonText="Ya"
+              noButtonText="Tidak"
+              handleYes={() => deleteId && saveDelete()}
+              handleNo={closeModalWarning}
+            />
+          )}
         </div>
       </div>
       {/* Table Pasien */}
       {loading && <Loading />}
-      <TablePasien pasien={pasien} />
+      <TablePasien
+        pasien={pasien}
+        handleEdit={(id: number) => handleEdit(id)}
+        handleDelete={(id: number) => handleDelete(id)}
+      />
     </div>
   );
 }

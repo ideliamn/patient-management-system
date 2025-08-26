@@ -10,7 +10,7 @@ import { TimeIcon } from "@/icons";
 import { useEffect, useState } from "react";
 
 interface FormDataType {
-    id?: string;
+    id?: number;
     no_rekam_medis: string;
     nama: string;
     tgl_masuk?: string;
@@ -24,7 +24,8 @@ interface FormDataType {
 interface ModalFormPasienProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (data: FormDataType) => void;
+    handleInsert: (data: FormDataType) => void;
+    handleUpdate: (data: FormDataType) => void;
     initialData?: FormDataType | null;
     options: { label: string; value: string }[];
 }
@@ -32,11 +33,13 @@ interface ModalFormPasienProps {
 export default function ModalFormPasien({
     isOpen,
     onClose,
-    onSave,
+    handleInsert,
+    handleUpdate,
     initialData,
     options,
 }: ModalFormPasienProps) {
     const [formData, setFormData] = useState<FormDataType>({
+        id: 0,
         no_rekam_medis: "",
         nama: "",
         tgl_masuk: "",
@@ -48,7 +51,8 @@ export default function ModalFormPasien({
     });
 
     useEffect(() => {
-        if (initialData) {
+        if (initialData && initialData.id !== 0) {
+            console.log("ada initial data")
             setFormData(initialData);
         } else {
             const now = new Date();
@@ -56,6 +60,7 @@ export default function ModalFormPasien({
             const timeNow = now.toTimeString().slice(0, 5);
 
             setFormData({
+                id: 0,
                 no_rekam_medis: "",
                 nama: "",
                 tgl_masuk: today,
@@ -73,10 +78,10 @@ export default function ModalFormPasien({
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSave = () => {
-        onSave(formData);
+    const handleClickSaveUpdate = () => {
+        initialData && initialData.id !== 0 ? handleUpdate(formData) : handleInsert(formData)
         onClose();
-    };
+    }
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px] p-5 lg:p-10 transition-all duration-300">
@@ -142,8 +147,8 @@ export default function ModalFormPasien({
                 <Button size="sm" variant="outline" onClick={onClose}>
                     Batal
                 </Button>
-                <Button size="sm" onClick={handleSave}>
-                    {initialData ? "Update" : "Simpan"}
+                <Button size="sm" onClick={handleClickSaveUpdate}>
+                    {initialData && initialData.id !== 0 ? "Update" : "Simpan"}
                 </Button>
             </div>
         </Modal>

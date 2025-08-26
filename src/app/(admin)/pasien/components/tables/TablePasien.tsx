@@ -20,17 +20,11 @@ interface Pasien {
 
 interface TablePasienProps {
     pasien: Pasien[];
+    handleEdit: (id: number) => void;
+    handleDelete: (id: number) => void;
 }
 
-export default function TablePasien({ pasien }: TablePasienProps) {
-    const handleEdit = (id: number) => {
-        console.log("Edit id:", id);
-    };
-
-    const handleDelete = (id: number) => {
-        console.log("Hapus id:", id);
-    };
-
+export default function TablePasien({ pasien, handleEdit, handleDelete }: TablePasienProps) {
     return (
         <div className="max-w-full overflow-x-auto">
             <Table>

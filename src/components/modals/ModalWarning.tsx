@@ -3,7 +3,6 @@
 import { Modal } from "@/components/ui/modal";
 
 interface ModalWarningProps {
-    id: number;
     isOpen: boolean;
     onClose: () => void;
     title?: string;
@@ -15,7 +14,6 @@ interface ModalWarningProps {
 }
 
 export default function ModalWarning({
-    id = 0,
     isOpen,
     onClose,
     title,
@@ -26,11 +24,11 @@ export default function ModalWarning({
     handleNo
 }: ModalWarningProps) {
     const onClickYes = () => {
-        handleYes;
+        handleYes();
         onClose();
     };
     const onClickNo = () => {
-        handleNo;
+        handleNo();
         onClose();
     };
 

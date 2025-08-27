@@ -141,7 +141,7 @@ export default function Pasien() {
       tgl_lahir: data.tgl_lahir,
       dpjp: data.dpjp,
       ppja: data.ppja,
-      kamar_id: data.kamar_id,
+      kamar_id: String(data.kamar_id),
     });
     setOpenModalAdd(true);
     setLoading(false)

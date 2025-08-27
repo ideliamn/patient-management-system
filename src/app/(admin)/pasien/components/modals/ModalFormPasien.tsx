@@ -52,7 +52,6 @@ export default function ModalFormPasien({
 
     useEffect(() => {
         if (initialData && initialData.id !== 0) {
-            console.log("ada initial data")
             setFormData(initialData);
         } else {
             const now = new Date();
@@ -137,7 +136,7 @@ export default function ModalFormPasien({
                 <div className="space-y-6">
                     <Label>Kamar</Label>
                     <div className="relative">
-                        <Select options={options} placeholder="Kamar" className="dark:bg-dark-900" defaultValue={formData.kamar_id}
+                        <Select options={options} placeholder="Kamar" className="dark:bg-dark-900" value={formData.kamar_id}
                             onChange={(val: string) => setFormData((prev) => ({ ...prev, kamar_id: val }))}
                         />
                     </div>

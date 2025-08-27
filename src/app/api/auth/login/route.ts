@@ -24,8 +24,6 @@ export async function POST(req: Request) {
     // data.session.profile = profile;
 
     const session = data.session;
-    console.log("session: ",session);
-
     const res = NextResponse.json({ user: data.user });
     if (session) {
       res.cookies.set("sb-access-token", session.access_token, {

@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
@@ -8,19 +7,21 @@ import Button from "../ui/button/Button";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import ModalInfo from "../modals/ModalInfo";
+import { useProfile } from "@/context/ProfileContext";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { signOut, user } = useAuth()
   const router = useRouter()
   const [openModalInfo, setOpenModalInfo] = useState(false);
-  const closeModalInfo = () => { setOpenModalInfo(false) };
+  const { profile } = useProfile();
 
   useEffect(() => {
     console.log("user session: ", JSON.stringify(user))
     if (!user) {
       setOpenModalInfo(true);
     }
+    console.log("profile: " + JSON.stringify(profile))
   }, [])
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -66,13 +67,14 @@ export default function UserDropdown() {
           <Image
             width={44}
             height={44}
-            src="/images/user/owner.jpg"
+            src={profile?.image_url ?? "/images/user/owner.jpg"}
             alt="User"
+            className="object-cover h-full w-full"
           />
         </span>
 
         <span className="block mr-1 font-medium text-theme-sm">
-          {user?.email}
+          {profile?.nama}
         </span>
 
         <svg
@@ -101,10 +103,13 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            {user?.email}
+            {profile?.nama}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            123456
+            {profile?.nip}
+          </span>
+          <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
+            {profile?.jabatan}
           </span>
         </div>
 

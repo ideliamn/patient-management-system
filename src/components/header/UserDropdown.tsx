@@ -8,21 +8,22 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import ModalInfo from "../modals/ModalInfo";
 import { useProfile } from "@/context/ProfileContext";
+import Loading from "../common/Loading";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const { signOut, user } = useAuth()
+  const { signOut, user, loading } = useAuth()
   const router = useRouter()
   const [openModalInfo, setOpenModalInfo] = useState(false);
   const { profile } = useProfile();
 
   useEffect(() => {
     console.log("user session: ", JSON.stringify(user))
-    if (!user) {
+    if (!user && !loading) {
       setOpenModalInfo(true);
     }
     console.log("profile: " + JSON.stringify(profile))
-  }, [])
+  }, [loading, user])
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -48,6 +49,7 @@ export default function UserDropdown() {
 
   return (
     <div className="relative">
+      {loading && <Loading />}
       {/* Modal Info */}
       {openModalInfo && (
         <ModalInfo

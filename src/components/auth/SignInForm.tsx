@@ -25,22 +25,6 @@ export default function SignInForm() {
 
     setError("");
 
-    // const res = await fetch("/api/auth/login", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ email, password }),
-    // });
-
-    // const data = await res.json();
-
-    // if (res.ok) {
-    //   router.push("/dashboard");
-    // } else {
-    //   setError(data.error || "Login gagal, coba lagi.");
-    //   setOpenModalFailed(true);
-    // }
     const { error } = await signIn(email, password)
 
     if (error) {

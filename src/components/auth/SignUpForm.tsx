@@ -8,14 +8,9 @@ import React, { useState } from "react";
 import FileInput from "../form/input/FileInput";
 import Loading from "../common/Loading";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
-import { registerSchema } from "@/lib/validations/registerSchema";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import ModalSuccess from "../modals/ModalSuccess";
 import ModalFailed from "../modals/ModalFailed";
-
-type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -26,7 +21,6 @@ export default function SignUpForm() {
   const closeModalFailed = () => { setOpenModalFailed(false) };
   const [failedMessage, setFailedMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
 
   const closeModalSuccess = () => {
     router.push("/login")
@@ -36,11 +30,12 @@ export default function SignUpForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-  });
+  } = useForm();
 
-  const onSubmit = async (data: RegisterFormData) => {
+  console.log("error input form: " + JSON.stringify(errors))
+
+  const onSubmit = async (data: any) => {
+    console.log("data (RHF):", data);
     setLoading(true);
 
     const formData = new FormData();
@@ -49,9 +44,11 @@ export default function SignUpForm() {
     formData.append("jabatan", data.jabatan);
     formData.append("email", data.email);
     formData.append("password", data.password);
-    if (data.avatar) {
-      formData.append("avatar", data.avatar);
+    if (data.avatar && data.avatar.length > 0) {
+      formData.append("avatar", data.avatar[0]);
     }
+
+    console.log("formData: " + JSON.stringify(formData))
 
     try {
       const res = await fetch("/api/auth/register", {
@@ -96,69 +93,109 @@ export default function SignUpForm() {
               <Label>
                 NIP <span className="text-error-500">*</span>
               </Label>
-              <Input
+              <input
+                type="text"
+                id="nip"
+                placeholder="NIP"
+                className="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
+                {...register("nip")}
+              />
+              {/* <Input
                 type="text"
                 id="nip"
                 placeholder="NIP"
                 {...register("nip")}
-              />
-              {errors.nip && <p className="text-red-500">{errors.nip.message}</p>}
+              /> */}
+              {/* {errors.nip && <p className="text-red-500">{errors.nip.message}</p>} */}
             </div>
           </div>
           <div className="py-3">
             <Label>
               Nama Lengkap <span className="text-error-500">*</span>
             </Label>
-            <Input
+            <input
+              type="text"
+              id="nama"
+              placeholder="Nama"
+              className="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
+              {...register("nama")}
+            />
+            {/* <Input
               type="text"
               id="nama"
               placeholder="Nama"
               {...register("nama")}
-            />
-            {errors.nama && <p className="text-red-500">{errors.nama.message}</p>}
+            /> */}
+            {/* {errors.nama && <p className="text-red-500">{errors.nama.message}</p>} */}
           </div>
           <div className="py-3">
             <Label>
               Jabatan <span className="text-error-500">*</span>
             </Label>
-            <Input
+            <input
+              type="text"
+              id="jabatan"
+              placeholder="Jabatan"
+              className="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
+              {...register("jabatan")}
+            />
+            {/* <Input
               type="text"
               id="jabatan"
               placeholder="Jabatan"
               {...register("jabatan")}
-            />
-            {errors.jabatan && <p className="text-red-500">{errors.jabatan.message}</p>}
+            /> */}
+            {/* {errors.jabatan && <p className="text-red-500">{errors.jabatan.message}</p>} */}
           </div>
           <div className="py-3">
             <Label>
               Foto Profil <span className="text-error-500">*</span>
             </Label>
-            <FileInput
+            <input
+              type="file"
               accept="image/*"
+              className="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
               {...register("avatar")}
             />
+            {/* <FileInput
+              accept="image/*"
+              {...register("avatar")}
+            /> */}
             {errors.avatar && <p className="text-red-500">Error upload gambar</p>}
           </div>
           <div className="py-3">
             <Label>
               E-mail <span className="text-error-500">*</span>
             </Label>
-            <Input
+            <input
+              type="email"
+              id="email"
+              placeholder="Email"
+              className="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
+              {...register("email")}
+            />
+            {/* <Input
               type="email"
               id="email"
               placeholder="Email"
               {...register("email")}
-            />
-            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+            /> */}
+            {/* {errors.email && <p className="text-red-500">{errors.email.message}</p>} */}
           </div>
           <div className="py-3">
             <Label>
               Password <span className="text-error-500">*</span>
             </Label>
             <div className="relative">
-              <Input
+              {/* <Input
                 placeholder="Password"
                 type={showPassword ? "text" : "password"}
+                {...register("password")}
+              /> */}
+              <input
+                placeholder="Password"
+                type={showPassword ? "text" : "password"}
+                className="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
                 {...register("password")}
               />
               <span
@@ -171,7 +208,7 @@ export default function SignUpForm() {
                   <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
                 )}
               </span>
-              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+              {/* {errors.password && <p className="text-red-500">{errors.password.message}</p>} */}
             </div>
           </div>
           <div className="py-3">

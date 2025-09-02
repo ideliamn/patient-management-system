@@ -57,7 +57,7 @@ export async function POST(req: Request) {
 
       const {
         data: { publicUrl },
-      } = supabase.storage.from("avatars").getPublicUrl(filename);
+      } = supabase.storage.from("avatar").getPublicUrl(filename);
 
       avatarUrl = publicUrl;
     }

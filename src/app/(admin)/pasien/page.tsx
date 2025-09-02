@@ -1,18 +1,8 @@
 "use client";
 
 import Loading from "@/components/common/Loading";
-import DatePicker from "@/components/form/date-picker";
-import Input from "@/components/form/input/InputField";
-import Label from "@/components/form/Label";
-import Select from "@/components/form/Select";
 import ModalFailed from "@/components/modals/ModalFailed";
 import ModalSuccess from "@/components/modals/ModalSuccess";
-import Badge from "@/components/ui/badge/Badge";
-import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
-import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
-import { TimeIcon } from "@/icons";
-import moment from "moment";
 import { useState, useEffect } from "react";
 import ModalFormPasien from "./components/modals/ModalFormPasien";
 import TablePasien from "./components/tables/TablePasien";

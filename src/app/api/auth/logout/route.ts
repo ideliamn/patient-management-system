@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { supabase } from "@/lib/supabaseClient";
 
 export async function POST() {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get("sb-access-token");
+    // const token = cookieStore.get("sb-access-token");
 
     await supabase.auth.signOut();
 

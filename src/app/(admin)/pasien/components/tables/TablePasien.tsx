@@ -1,7 +1,6 @@
 "use client";
 
 import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
-import Badge from "@/components/ui/badge/Badge";
 import moment from "moment";
 import Button from "@/components/ui/button/Button";
 

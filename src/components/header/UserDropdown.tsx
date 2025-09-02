@@ -22,7 +22,7 @@ export default function UserDropdown() {
     if (!user && !loading) {
       setOpenModalInfo(true);
     }
-    console.log("profile: " + JSON.stringify(profile))
+    // console.log("profile: " + JSON.stringify(profile))
   }, [loading, user])
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -216,8 +216,5 @@ export default function UserDropdown() {
       </Dropdown>
     </div>
   );
-}
-function async() {
-  throw new Error("Function not implemented.");
 }
 

@@ -10,6 +10,11 @@ type Profile = {
     nama: string;
     jabatan: string;
     image_url: string;
+    id_auth: string;
+    created_by: string;
+    created_at: Date;
+    updated_by: string;
+    updated_at: Date;
 };
 
 type ProfileContextType = {

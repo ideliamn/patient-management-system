@@ -19,11 +19,10 @@ export default function UserDropdown() {
 
   useEffect(() => {
     console.log("user session: ", JSON.stringify(user))
-    if (!user && !loading) {
+    if (!user && !profile && !loading) {
       setOpenModalInfo(true);
     }
-    // console.log("profile: " + JSON.stringify(profile))
-  }, [loading, user])
+  }, [loading, user, profile])
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();

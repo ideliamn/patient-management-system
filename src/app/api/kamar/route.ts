@@ -7,8 +7,8 @@ const supabase = createClient(
 );
 
 export async function GET() {
-  const { data, error } = await supabase.from("master_kamar").select("*");
-  
+  const { data, error } = await supabase.from("master_kamar").select("*").order("nama", { ascending: true });
+
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

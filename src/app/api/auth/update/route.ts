@@ -14,6 +14,23 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "id_auth is required" }, { status: 400 });
         }
 
+        const param: { email?: string; password?: string } = {};
+
+        if (email && email.trim() !== "") {
+            param.email = email.trim();
+        }
+
+        if (password && password.trim() !== "") {
+            param.password = password;
+        }
+
+        if (Object.keys(param).length === 0) {
+            return NextResponse.json(
+                { message: "No fields to update" },
+                { status: 400 }
+            );
+        }
+
         const { error } = await supabase.auth.admin.updateUserById(id_auth, {
             email,
             password,

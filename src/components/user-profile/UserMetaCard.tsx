@@ -50,8 +50,11 @@ export default function UserMetaCard() {
     console.log("Saving new avatar:", selectedFile);
     const formData = new FormData();
     formData.append("avatar", selectedFile);
-    if (profile?.id_auth) {
-      formData.append("id_auth", profile.id_auth);
+    if (profile?.id) {
+      formData.append("id", profile.id);
+    }
+    if (profile?.nip) {
+      formData.append("nip", profile.nip);
     }
     console.log("formData: " + JSON.stringify(formData))
     try {

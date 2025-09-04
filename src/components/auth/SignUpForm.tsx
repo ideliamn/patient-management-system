@@ -119,6 +119,9 @@ export default function SignUpForm() {
               placeholder="Nama"
               className="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
               {...register("nama")}
+              onChange={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+              }}
             />
             {/* <Input
               type="text"

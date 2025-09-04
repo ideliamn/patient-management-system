@@ -148,7 +148,15 @@ export default function UserInfoCard() {
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Nama</Label>
                     {/* <Input type="text" defaultValue={profile?.nama} /> */}
-                    <input className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" type="text" defaultValue={profile?.nama} {...register("nama")} />
+                    <input
+                      className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      type="text"
+                      defaultValue={profile?.nama}
+                      {...register("nama")}
+                      onChange={(e) => {
+                        e.target.value = e.target.value.toUpperCase();
+                      }}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">

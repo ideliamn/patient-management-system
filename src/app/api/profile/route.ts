@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { dateTimeNow } from "@/lib/helpers/dateTimeNow";
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -37,29 +38,49 @@ export async function DELETE(
 }
 
 export async function PUT(req: Request) {
-    const formData = await req.formData();
+    try {
+        const { id, nip, nama, jabatan } = await req.json();
 
-    const id_auth = formData.get("id_auth") as string;
-    const nama = formData.get("nama") as string;
-    const jabatan = formData.get("jabatan") as string;
-    const avatar = formData.get("avatar") as File | null;
-    const updated_by = formData.get("updated_by") as string;
+        if (!id) {
+            return NextResponse.json({ error: "id is required" }, { status: 400 });
+        }
 
-    if (!id_auth) {
-        return NextResponse.json({ error: "id_auth is required" }, { status: 400 });
-    }
+        const paramUpdate: {
+            nama?: string;
+            jabatan?: string;
+            updated_by?: string;
+            updated_at?: string;
+        } = {};
 
-    const { error } = await supabase
-        .from("profiles")
-        .update({
-            nama,
-            jabatan,
-            updated_at: new Date(),
-            updated_by,
-        })
-        .eq("id_auth", id_auth);
+        if (nama && nama.trim() !== "") {
+            paramUpdate.nama = nama.trim();
+        }
 
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        if (jabatan && jabatan.trim() !== "") {
+            paramUpdate.jabatan = jabatan;
+        }
+
+        paramUpdate.updated_by = nip;
+        paramUpdate.updated_at = dateTimeNow();
+
+        if (Object.keys(paramUpdate).length === 0) {
+            return NextResponse.json(
+                { message: "No fields to update" },
+                { status: 400 }
+            );
+        }
+
+        const { error } = await supabase
+            .from("profiles")
+            .update(paramUpdate)
+            .eq("id", id);
+
+        if (error) {
+            return NextResponse.json({ error: "Gagal update profil: " + error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ message: "Berhasil update profil" }, { status: 200 });
+    } catch (err: any) {
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

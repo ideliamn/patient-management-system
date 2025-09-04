@@ -1,22 +1,75 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useProfile } from "@/context/ProfileContext";
+import { useForm } from "react-hook-form";
+import Loading from "../common/Loading";
+import ModalSuccess from "../modals/ModalSuccess";
+import ModalFailed from "../modals/ModalFailed";
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
   const { profile } = useProfile();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
+  const [loading, setLoading] = useState(false);
+  const [openModalSuccess, setOpenModalSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [openModalFailed, setOpenModalFailed] = useState(false);
+  const closeModalFailed = () => { setOpenModalFailed(false) };
+  const [failedMessage, setFailedMessage] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const closeModalSuccess = () => {
+    window.location.reload();
+  };
+
+  const handleSave = async (data: any) => {
+    setLoading(true);
+    console.log("data (RHF):", data);
+    try {
+      const res = await fetch("/api/profile/", {
+        method: "PUT",
+        body: JSON.stringify({
+          id: profile?.id,
+          nip: profile?.nip,
+          nama: data.nama,
+          jabatan: data.jabatan
+        })
+      })
+
+      const result = await res.json()
+
+      if (res.ok) {
+        setSuccessMessage("Sukses edit profil");
+        setLoading(false);
+        setOpenModalSuccess(true);
+      } else {
+        setFailedMessage("Gagal edit profil. Error: " + result.message);
+        setLoading(false);
+        setOpenModalFailed(true);
+      }
+
+    } catch (err) {
+      console.error(err);
+      setFailedMessage("Gagal edit profil. Error: " + err);
+      setLoading(false);
+      setOpenModalFailed(true);
+    } finally {
+      setLoading(false);
+    }
     closeModal();
   };
+
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+      {loading && <Loading />}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
@@ -83,7 +136,7 @@ export default function UserInfoCard() {
               Edit Profil
             </h4>
           </div>
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleSubmit(handleSave)}>
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div className="mt-7">
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
@@ -94,12 +147,14 @@ export default function UserInfoCard() {
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Nama</Label>
-                    <Input type="text" defaultValue={profile?.nama} />
+                    {/* <Input type="text" defaultValue={profile?.nama} /> */}
+                    <input className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" type="text" defaultValue={profile?.nama} {...register("nama")} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Jabatan</Label>
-                    <Input type="text" defaultValue={profile?.jabatan} />
+                    {/* <Input type="text" defaultValue={profile?.jabatan} /> */}
+                    <input className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" type="text" defaultValue={profile?.jabatan} {...register("jabatan")} />
                   </div>
                 </div>
               </div>
@@ -108,13 +163,31 @@ export default function UserInfoCard() {
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Batal
               </Button>
-              <Button size="sm" onClick={handleSave}>
+              {/* <Button size="sm" onClick={handleSave}> */}
+              <button type="submit" className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300 px-4 py-3 text-sm">
                 Simpan
-              </Button>
+              </button>
+              {/* </Button> */}
             </div>
           </form>
         </div>
       </Modal>
+      {/* Modal Success */}
+      {openModalSuccess && (
+        <ModalSuccess
+          isOpen={openModalSuccess}
+          onClose={closeModalSuccess}
+          message={successMessage}
+        />
+      )}
+      {/* Modal Failed */}
+      {openModalFailed && (
+        <ModalFailed
+          isOpen={openModalFailed}
+          onClose={closeModalFailed}
+          message={failedMessage}
+        />
+      )}
     </div>
   );
 }

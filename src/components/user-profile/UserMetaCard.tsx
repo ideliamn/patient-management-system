@@ -22,12 +22,6 @@ export default function UserMetaCard() {
   const closeModalFailed = () => { setOpenModalFailed(false) };
   const [failedMessage, setFailedMessage] = useState("");
 
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
-  };
-
   const closeModalSuccess = () => {
     window.location.reload();
   };

@@ -6,6 +6,7 @@ import Label from "@/components/form/Label";
 import Select from "@/components/form/Select";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
+import SearchableSelect, { SelectOption } from "@/components/ui/select/SearchableSelect";
 import { TimeIcon } from "@/icons";
 import { useEffect, useState } from "react";
 
@@ -136,8 +137,17 @@ export default function ModalFormPasien({
                 <div className="space-y-6">
                     <Label>Kamar</Label>
                     <div className="relative">
-                        <Select options={options} placeholder="Kamar" className="dark:bg-dark-900" value={formData.kamar_id}
+                        {/* <Select options={options} placeholder="Kamar" className="dark:bg-dark-900" value={formData.kamar_id}
                             onChange={(val: string) => setFormData((prev) => ({ ...prev, kamar_id: val }))}
+                        /> */}
+                        <SearchableSelect
+                            className="dark:bg-dark-900"
+                            options={options}
+                            placeholder="Pilih kamar"
+                            value={options.find((opt) => opt.value === formData.kamar_id) || null}
+                            onChange={(opt: SelectOption | null) =>
+                                setFormData((prev) => ({ ...prev, kamar_id: opt?.value || "" }))
+                            }
                         />
                     </div>
                 </div>

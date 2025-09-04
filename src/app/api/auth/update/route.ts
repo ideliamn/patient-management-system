@@ -31,10 +31,7 @@ export async function POST(req: Request) {
             );
         }
 
-        const { error } = await supabase.auth.admin.updateUserById(id_auth, {
-            email,
-            password,
-        });
+        const { error } = await supabase.auth.admin.updateUserById(id_auth, param);
 
         if (error) {
             return NextResponse.json({ message: error.message }, { status: 400 });

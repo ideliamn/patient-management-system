@@ -1,63 +1,99 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useAuth } from "@/context/AuthContext";
+import ModalSuccess from "../modals/ModalSuccess";
+import ModalFailed from "../modals/ModalFailed";
+import Loading from "../common/Loading";
+import { useForm } from "react-hook-form";
+import { useProfile } from "@/context/ProfileContext";
 
 export default function UserAddressCard() {
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
+  const { user } = useAuth();
+  const { profile } = useProfile();
+  const [loading, setLoading] = useState(false);
+  const [openModalSuccess, setOpenModalSuccess] = useState(false);
+  const closeModalSuccess = () => { setOpenModalSuccess(false) };
+  const [successMessage, setSuccessMessage] = useState("");
+  const [openModalFailed, setOpenModalFailed] = useState(false);
+  const closeModalFailed = () => { setOpenModalFailed(false) };
+  const [failedMessage, setFailedMessage] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const handleSave = async (data: any) => {
+    setLoading(true);
+    console.log("data (RHF):", data);
+    try {
+      const res = await fetch("/api/auth/update/", {
+        method: "POST",
+        body: JSON.stringify({
+          id_auth: profile?.id_auth,
+          email: data.email,
+          password: data.password,
+        })
+      })
+
+      const result = await res.json()
+
+      if (res.ok) {
+        setSuccessMessage("Sukses edit akun");
+        setLoading(false);
+        setOpenModalSuccess(true);
+      } else {
+        setFailedMessage("Gagal edit akun. Error: " + result.message);
+        setLoading(false);
+        setOpenModalFailed(true);
+      }
+
+    } catch (err) {
+      console.error(err);
+      setFailedMessage("Gagal edit akun. Error: " + err);
+      setLoading(false);
+      setOpenModalFailed(true);
+    } finally {
+      setLoading(false);
+    }
     closeModal();
   };
+
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+        {loading && <Loading />}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-              Address
+              Akun
             </h4>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Country
+                  Email
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  United States
+                  {user?.email}
                 </p>
               </div>
 
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  City/State
+                  Password
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  Phoenix, Arizona, United States.
+                  *********
                 </p>
               </div>
 
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Postal Code
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  ERT 2489
-                </p>
-              </div>
-
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  TAX ID
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  AS4568384
-                </p>
-              </div>
             </div>
           </div>
 
@@ -88,47 +124,54 @@ export default function UserAddressCard() {
         <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit Address
+              Edit Akun
             </h4>
-            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your details to keep your profile up-to-date.
-            </p>
           </div>
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleSubmit(handleSave)}>
             <div className="px-2 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                 <div>
-                  <Label>Country</Label>
-                  <Input type="text" defaultValue="United States" />
+                  <Label>Email</Label>
+                  {/* <Input type="text" {...register("email")} defaultValue={user?.email} /> */}
+                  <input className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" type="text" defaultValue={user?.email} {...register("email")} />
                 </div>
 
                 <div>
-                  <Label>City/State</Label>
-                  <Input type="text" defaultValue="Arizona, United States." />
+                  <Label>Password</Label>
+                  {/* <Input type="password" {...register("password")} /> */}
+                  <input className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" type="password" {...register("password")} />
                 </div>
 
-                <div>
-                  <Label>Postal Code</Label>
-                  <Input type="text" defaultValue="ERT 2489" />
-                </div>
-
-                <div>
-                  <Label>TAX ID</Label>
-                  <Input type="text" defaultValue="AS4568384" />
-                </div>
               </div>
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
               <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
+                Tutup
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
-              </Button>
+              {/* <Button size="sm" onClick={handleSubmit(handleSave)}> */}
+              <button type="submit" className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300 px-4 py-3 text-sm">
+                Simpan
+              </button>
             </div>
           </form>
         </div>
       </Modal>
+      {/* Modal Success */}
+      {openModalSuccess && (
+        <ModalSuccess
+          isOpen={openModalSuccess}
+          onClose={closeModalSuccess}
+          message={successMessage}
+        />
+      )}
+      {/* Modal Failed */}
+      {openModalFailed && (
+        <ModalFailed
+          isOpen={openModalFailed}
+          onClose={closeModalFailed}
+          message={failedMessage}
+        />
+      )}
     </>
   );
 }

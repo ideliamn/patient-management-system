@@ -92,10 +92,10 @@ export default function TablePasien({ pasien, handleEdit, handleDelete }: TableP
                                 {p.nama}
                             </TableCell>
                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                {moment(new Date(p.tgl_masuk)).format("DD-MM-YYYY HH:mm")}
+                                {moment(new Date(p.tgl_masuk)).format("DD MMMM YYYY HH:mm")}
                             </TableCell>
                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                {moment(new Date(p.tgl_lahir)).format("DD-MM-YYYY")}
+                                {moment(new Date(p.tgl_lahir)).format("DD MMMM YYYY")}
                             </TableCell>
                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                 {p.dpjp}

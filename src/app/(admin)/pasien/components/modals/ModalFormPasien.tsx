@@ -75,7 +75,7 @@ export default function ModalFormPasien({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: name === "nama" ? value.toUpperCase() : value }));
     };
 
     const handleClickSaveUpdate = () => {
@@ -95,7 +95,7 @@ export default function ModalFormPasien({
                 </div>
                 <div className="space-y-6">
                     <Label>Nama</Label>
-                    <Input name="nama" type="text" placeholder="Nama" onChange={handleChange} defaultValue={formData.nama} />
+                    <Input name="nama" type="text" placeholder="Nama" onChange={handleChange} defaultValue={formData.nama} className={"uppercase"} />
                 </div>
             </div>
             <div className="grid grid-cols-1 gap-3 xl:grid-cols-2 py-3">

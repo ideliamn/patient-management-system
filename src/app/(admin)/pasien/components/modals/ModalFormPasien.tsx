@@ -51,6 +51,9 @@ export default function ModalFormPasien({
         kamar_id: "",
     });
 
+    const [availability, setAvailability] = useState<number | null>(null);
+    const [loadingAvailability, setLoadingAvailability] = useState(false);
+
     useEffect(() => {
         if (initialData && initialData.id !== 0) {
             setFormData(initialData);
@@ -82,6 +85,37 @@ export default function ModalFormPasien({
         initialData && initialData.id !== 0 ? handleUpdate(formData) : handleInsert(formData)
         onClose();
     }
+
+    // const kamarOnChange = () => {
+    //     (opt: SelectOption | null) => setFormData((prev) => ({ ...prev, kamar_id: opt?.value || "" }))
+    // }
+    const kamarOnChange = async (opt: SelectOption | null) => {
+        const kamarId = opt?.value || "";
+        setFormData((prev) => ({ ...prev, kamar_id: kamarId }));
+
+        if (!kamarId) {
+            setAvailability(null);
+            return;
+        }
+
+        setLoadingAvailability(true);
+
+
+        if (kamarId) {
+            try {
+                const res = await fetch(`/api/kamar/availability/${kamarId}`);
+                const data = await res.json();
+                setAvailability(data.ketersediaan);
+            } catch (err) {
+                console.error("Gagal cek ketersediaan kamar", err);
+                setAvailability(null);
+            } finally {
+                setLoadingAvailability(false);
+            }
+        } else {
+            setAvailability(null);
+        }
+    };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px] p-5 lg:p-10 transition-all duration-300">
@@ -145,10 +179,35 @@ export default function ModalFormPasien({
                             options={options}
                             placeholder="Pilih kamar"
                             value={options.find((opt) => opt.value === formData.kamar_id) || null}
-                            onChange={(opt: SelectOption | null) =>
-                                setFormData((prev) => ({ ...prev, kamar_id: opt?.value || "" }))
-                            }
+                            onChange={kamarOnChange}
                         />
+                        {/* loading spinner */}
+                        {loadingAvailability && (
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                                <svg
+                                    className="animate-spin h-4 w-4 text-blue-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v8H4z"
+                                    ></path>
+                                </svg>
+                                Cek ketersediaan kamar...
+                            </div>
+                        )}
+                        {!loadingAvailability && availability === 0 && <Label className={"text-red-500"}>Kamar sudah penuh!</Label>}
                     </div>
                 </div>
             </div>
@@ -156,7 +215,7 @@ export default function ModalFormPasien({
                 <Button size="sm" variant="outline" onClick={onClose}>
                     Batal
                 </Button>
-                <Button size="sm" onClick={handleClickSaveUpdate}>
+                <Button size="sm" onClick={handleClickSaveUpdate} disabled={availability === 0}>
                     {initialData && initialData.id !== 0 ? "Update" : "Simpan"}
                 </Button>
             </div>

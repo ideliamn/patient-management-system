@@ -19,11 +19,12 @@ interface Pasien {
 
 interface TablePasienProps {
     pasien: Pasien[];
+    handlePulang: (id: number) => void;
     handleEdit: (id: number) => void;
     handleDelete: (id: number) => void;
 }
 
-export default function TablePasien({ pasien, handleEdit, handleDelete }: TablePasienProps) {
+export default function TablePasien({ pasien, handlePulang, handleEdit, handleDelete }: TablePasienProps) {
     return (
         <div className="max-w-full overflow-x-auto">
             <Table>
@@ -108,6 +109,11 @@ export default function TablePasien({ pasien, handleEdit, handleDelete }: TableP
                             </TableCell>
                             <TableCell className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                 <div className="grid grid-cols-2 gap-2 py-3">
+                                    <div className="col-span-2">
+                                        <Button size="xs" className="bg-green-500 hover:bg-green-600 text-white" onClick={() => handlePulang(p.id)}>
+                                            Pulang
+                                        </Button>
+                                    </div>
                                     <Button size="xs" className="bg-yellow-500 hover:bg-yellow-600 text-white" onClick={() => handleEdit(p.id)}>
                                         Edit
                                     </Button>

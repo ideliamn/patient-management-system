@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import ModalFormPasien from "./components/modals/ModalFormPasien";
 import TablePasien from "./components/tables/TablePasien";
 import ModalWarning from "@/components/modals/ModalWarning";
+import ModalFormPemulanganPasien from "./components/modals/ModalFormPemulanganPasien";
 
 interface Pasien {
   id: number;
@@ -26,6 +27,11 @@ interface Kamar {
   nama: string;
 }
 
+interface Dokumen {
+  id: number;
+  nama: string;
+}
+
 export default function Pasien() {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -39,6 +45,8 @@ export default function Pasien() {
   const [openModalWarning, setOpenModalWarning] = useState(false);
   const closeModalWarning = () => { setOpenModalWarning(false) };
   const [options, setOptions] = useState<{ value: string; label: string }[]>([]);
+  const [dokumenOptions, setDokumenOptions] = useState<{ value: string; label: string }[]>([]);
+
   const [openModalAdd, setOpenModalAdd] = useState(false);
   const closeModalAdd = () => {
     console.log("close modal add")
@@ -56,6 +64,23 @@ export default function Pasien() {
     console.log("form data, " + JSON.stringify(formData))
     setOpenModalAdd(false)
   };
+
+  const [openModalPemulangan, setOpenModalPemulangan] = useState(false);
+  const closeModalPemulangan = () => {
+    console.log("close modal add")
+    setFormDataPulang({
+      id: 0,
+      nama_pasien: "",
+      pasien_id: 0,
+      nama_penerima: "",
+      kontak_penerima: "",
+      tgl_pulang: "",
+      waktu_pulang: "",
+      tanda_tangan: "",
+    })
+    setOpenModalPemulangan(false)
+  };
+
   const [formData, setFormData] = useState({
     id: 0,
     no_rekam_medis: "",
@@ -66,6 +91,17 @@ export default function Pasien() {
     dpjp: "",
     ppja: "",
     kamar_id: "",
+  });
+
+  const [formDataPulang, setFormDataPulang] = useState({
+    id: 0,
+    nama_pasien: "",
+    pasien_id: 0,
+    nama_penerima: "",
+    kontak_penerima: "",
+    tgl_pulang: "",
+    waktu_pulang: "",
+    tanda_tangan: "",
   });
 
   const refreshTabelPasien = () => {
@@ -86,6 +122,15 @@ export default function Pasien() {
           label: k.nama,
         }));
         setOptions(formattedOptions);
+
+        // get dokumen
+        const getDokumen = await fetch("/api/dokumen");
+        const dataDokumen: Dokumen[] = await getDokumen.json();
+        const formattedDokumenOptions = dataDokumen.map((k) => ({
+          value: String(k.id),
+          label: k.nama,
+        }));
+        setDokumenOptions(formattedDokumenOptions);
       } catch (err) {
         console.error("Error fetch data:", err);
       } finally {
@@ -115,6 +160,27 @@ export default function Pasien() {
     closeModalAdd();
     refreshTabelPasien();
   };
+
+  const handlePulang = async (id: number) => {
+    setLoading(true)
+    const res = await fetch(`/api/pasien/${id}`);
+    const data = await res.json();
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
+    const timeNow = now.toTimeString().slice(0, 5);
+    setFormDataPulang({
+      id: 0,
+      nama_pasien: data.nama,
+      pasien_id: data.id,
+      nama_penerima: "",
+      kontak_penerima: "",
+      tgl_pulang: today,
+      waktu_pulang: timeNow,
+      tanda_tangan: "",
+    });
+    setOpenModalPemulangan(true);
+    setLoading(false)
+  }
 
   const handleEdit = async (id: number) => {
     setLoading(true)
@@ -187,6 +253,16 @@ export default function Pasien() {
     }
   };
 
+  const saveInsertPulang = async (formDataPulang: any) => {
+    // setLoading(true);
+    console.log("INSERT PULANG formDataPulang: ", formDataPulang)
+  };
+
+  const saveUpdatePulang = async (formDataPulang: any) => {
+    // setLoading(true);
+    console.log("UPDATE PULANG formDataPulang: ", formDataPulang)
+  };
+
   useEffect(() => {
     refreshTabelPasien();
   }, []);
@@ -246,6 +322,17 @@ export default function Pasien() {
             Tambahkan
           </button>
           {/* Modal Form Pasien */}
+          {openModalPemulangan && (
+            <ModalFormPemulanganPasien
+              isOpen={openModalPemulangan}
+              onClose={closeModalPemulangan}
+              handleInsert={saveInsertPulang}
+              handleUpdate={saveUpdatePulang}
+              optionsDokumen={dokumenOptions}
+              initialData={formDataPulang}
+            />
+          )}
+          {/* Modal Form Pemulangan Pasien */}
           {openModalAdd && (
             <ModalFormPasien
               isOpen={openModalAdd}
@@ -291,6 +378,7 @@ export default function Pasien() {
       {loading && <Loading />}
       <TablePasien
         pasien={pasien}
+        handlePulang={(id: number) => handlePulang(id)}
         handleEdit={(id: number) => handleEdit(id)}
         handleDelete={(id: number) => handleDelete(id)}
       />

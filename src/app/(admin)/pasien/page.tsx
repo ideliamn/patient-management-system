@@ -46,6 +46,16 @@ export default function Pasien() {
   const closeModalWarning = () => { setOpenModalWarning(false) };
   const [options, setOptions] = useState<{ value: string; label: string }[]>([]);
   const [dokumenOptions, setDokumenOptions] = useState<{ value: string; label: string }[]>([]);
+  const [formDataPulang, setFormDataPulang] = useState({
+    id: 0,
+    nama_pasien: "",
+    pasien_id: 0,
+    nama_penerima: "",
+    kontak_penerima: "",
+    tgl_pulang: "",
+    waktu_pulang: "",
+    dokumen: []
+  });
 
   const [openModalAdd, setOpenModalAdd] = useState(false);
   const closeModalAdd = () => {
@@ -76,7 +86,7 @@ export default function Pasien() {
       kontak_penerima: "",
       tgl_pulang: "",
       waktu_pulang: "",
-      tanda_tangan: "",
+      dokumen: []
     })
     setOpenModalPemulangan(false)
   };
@@ -91,17 +101,6 @@ export default function Pasien() {
     dpjp: "",
     ppja: "",
     kamar_id: "",
-  });
-
-  const [formDataPulang, setFormDataPulang] = useState({
-    id: 0,
-    nama_pasien: "",
-    pasien_id: 0,
-    nama_penerima: "",
-    kontak_penerima: "",
-    tgl_pulang: "",
-    waktu_pulang: "",
-    tanda_tangan: "",
   });
 
   const refreshTabelPasien = () => {
@@ -169,14 +168,14 @@ export default function Pasien() {
     const today = now.toISOString().split("T")[0];
     const timeNow = now.toTimeString().slice(0, 5);
     setFormDataPulang({
-      id: 0,
+      id: data.pasien_kepulangan !== null ? data.pasien_kepulangan.id : 0,
       nama_pasien: data.nama,
       pasien_id: data.id,
-      nama_penerima: "",
-      kontak_penerima: "",
-      tgl_pulang: today,
-      waktu_pulang: timeNow,
-      tanda_tangan: "",
+      nama_penerima: data.pasien_kepulangan !== null ? data.pasien_kepulangan.nama_penerima : "",
+      kontak_penerima: data.pasien_kepulangan !== null ? data.pasien_kepulangan.kontak_penerima : "",
+      tgl_pulang: data.pasien_kepulangan !== null ? data.pasien_kepulangan.tanggal_kepulangan.split("T")[0] : today,
+      waktu_pulang: data.pasien_kepulangan !== null ? data.pasien_kepulangan.tanggal_kepulangan.split("T")[1].slice(0, 5) : timeNow,
+      dokumen: data.pasien_dokumen.length > 0 ? data.pasien_dokumen.map((d: any) => d.dokumen_id) : []
     });
     setOpenModalPemulangan(true);
     setLoading(false)

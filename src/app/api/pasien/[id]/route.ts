@@ -11,7 +11,7 @@ export async function GET(
     context: { params: Promise<{ id: string }> }
 ) {
     const { id } = await context.params;
-    const { data, error } = await supabase.from("pasien").select('*').eq("id", id).single();
+    const { data, error } = await supabase.from("pasien").select("*, master_kamar(nama), pasien_kepulangan(*), pasien_dokumen(*)").eq("id", id).single();
     console.log("error, " + error)
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

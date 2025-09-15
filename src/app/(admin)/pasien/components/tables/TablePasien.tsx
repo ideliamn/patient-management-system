@@ -15,6 +15,7 @@ interface Pasien {
     kamar: string;
     status: "draft" | "completed";
     master_kamar: { nama: string };
+    pasien_kepulangan: { id: number };
 }
 
 interface TablePasienProps {
@@ -77,6 +78,12 @@ export default function TablePasien({ pasien, handlePulang, handleEdit, handleDe
                             isHeader
                             className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
                         >
+                            Status
+                        </TableCell>
+                        <TableCell
+                            isHeader
+                            className="py-3 font-medium text-gray-500 text-center text-theme-lg dark:text-gray-400"
+                        >
                             Action
                         </TableCell>
                     </TableRow>
@@ -108,12 +115,17 @@ export default function TablePasien({ pasien, handlePulang, handleEdit, handleDe
                                 {p.master_kamar.nama}
                             </TableCell>
                             <TableCell className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                                <div className="grid grid-cols-2 gap-2 py-3">
+                                <div className="grid grid-cols-2 gap-2 py-1">
                                     <div className="col-span-2">
-                                        <Button size="xs" className="bg-green-500 hover:bg-green-600 text-white" onClick={() => handlePulang(p.id)}>
-                                            Pulang
-                                        </Button>
+                                        {p.pasien_kepulangan !== null ? "Sudah Pulang" : "Belum Pulang"}
                                     </div>
+                                </div>
+                                <Button size="xs" className={p.pasien_kepulangan !== null ? "bg-cyan-500 hover:bg-cyan-600 text-white" : "bg-green-500 hover:bg-green-600 text-white"} onClick={() => handlePulang(p.id)}>
+                                    {p.pasien_kepulangan !== null ? "Edit Data Pulang" : "Pulangkan Pasien"}
+                                </Button>
+                            </TableCell>
+                            <TableCell className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
+                                <div className="grid grid-cols-2 gap-2 py-3">
                                     <Button size="xs" className="bg-yellow-500 hover:bg-yellow-600 text-white" onClick={() => handleEdit(p.id)}>
                                         Edit
                                     </Button>

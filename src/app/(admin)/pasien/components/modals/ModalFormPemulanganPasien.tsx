@@ -17,7 +17,7 @@ interface FormDataPulangType {
     kontak_penerima?: string;
     tgl_pulang?: string;
     waktu_pulang?: string;
-    tanda_tangan?: string;
+    dokumen?: number[];
 }
 
 interface ModalFormPemulanganPasienProps {
@@ -39,14 +39,16 @@ export default function ModalFormPemulanganPasien({
 }: ModalFormPemulanganPasienProps) {
     const [formDataPulang, setFormDataPulang] = useState<FormDataPulangType>({
         id: 0,
-        pasien_id: 0,
         nama_pasien: "",
+        pasien_id: 0,
         nama_penerima: "",
         kontak_penerima: "",
         tgl_pulang: "",
         waktu_pulang: "",
-        tanda_tangan: "",
+        dokumen: []
     });
+
+    const [selectedDokumen, setSelectedDokumen] = useState<string[]>([]);
 
     useEffect(() => {
         console.log("initialData: " + JSON.stringify(initialData))
@@ -66,8 +68,9 @@ export default function ModalFormPemulanganPasien({
                 kontak_penerima: "",
                 tgl_pulang: today,
                 waktu_pulang: timeNow,
-                tanda_tangan: "",
+                dokumen: []
             });
+            setSelectedDokumen([]);
         }
     }, [initialData, isOpen]);
 
@@ -81,7 +84,6 @@ export default function ModalFormPemulanganPasien({
         onClose();
     }
 
-    const [selectedDokumen, setSelectedDokumen] = useState<string[]>([]);
     const handleDokumenChange = (id: string, checked: boolean) => {
         setSelectedDokumen((prev) =>
             checked ? [...prev, id] : prev.filter((item) => item !== id)
@@ -109,7 +111,7 @@ export default function ModalFormPemulanganPasien({
             <div className="grid grid-cols-1 gap-3 xl:grid-cols-2 py-3">
                 <div className="space-y-6">
                     <Label>Kontak Penerima</Label>
-                    <Input name="kontak" type="text" placeholder="Kontak Penerima" defaultValue={formDataPulang.kontak_penerima} onChange={handleChange} />
+                    <Input name="kontak_penerima" type="text" placeholder="Kontak Penerima" defaultValue={formDataPulang.kontak_penerima} onChange={handleChange} />
                 </div>
                 <div className="space-y-6">
                     <Label>Tanggal Kepulangan</Label>

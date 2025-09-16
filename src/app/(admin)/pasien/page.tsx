@@ -8,6 +8,7 @@ import ModalFormPasien from "./components/modals/ModalFormPasien";
 import TablePasien from "./components/tables/TablePasien";
 import ModalWarning from "@/components/modals/ModalWarning";
 import ModalFormPemulanganPasien from "./components/modals/ModalFormPemulanganPasien";
+import { useProfile } from "@/context/ProfileContext";
 
 interface Pasien {
   id: number;
@@ -19,7 +20,8 @@ interface Pasien {
   ppja: string;
   kamar: string;
   status: "draft" | "completed";
-  master_kamar: { nama: string; }
+  master_kamar: { nama: string; };
+  pasien_kepulangan: { id: number };
 }
 
 interface Kamar {
@@ -33,6 +35,7 @@ interface Dokumen {
 }
 
 export default function Pasien() {
+  const { profile } = useProfile();
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [pasien, setPasien] = useState<Pasien[]>([]);
@@ -54,7 +57,9 @@ export default function Pasien() {
     kontak_penerima: "",
     tgl_pulang: "",
     waktu_pulang: "",
-    dokumen: []
+    dokumen: [],
+    createdBy: profile?.nip,
+    updatedBy: profile?.nip
   });
 
   const [openModalAdd, setOpenModalAdd] = useState(false);
@@ -86,7 +91,9 @@ export default function Pasien() {
       kontak_penerima: "",
       tgl_pulang: "",
       waktu_pulang: "",
-      dokumen: []
+      dokumen: [],
+      createdBy: profile?.nip,
+      updatedBy: profile?.nip
     })
     setOpenModalPemulangan(false)
   };
@@ -175,7 +182,9 @@ export default function Pasien() {
       kontak_penerima: data.pasien_kepulangan !== null ? data.pasien_kepulangan.kontak_penerima : "",
       tgl_pulang: data.pasien_kepulangan !== null ? data.pasien_kepulangan.tanggal_kepulangan.split("T")[0] : today,
       waktu_pulang: data.pasien_kepulangan !== null ? data.pasien_kepulangan.tanggal_kepulangan.split("T")[1].slice(0, 5) : timeNow,
-      dokumen: data.pasien_dokumen.length > 0 ? data.pasien_dokumen.map((d: any) => d.dokumen_id) : []
+      dokumen: data.pasien_dokumen.length > 0 ? data.pasien_dokumen.map((d: any) => d.dokumen_id) : [],
+      createdBy: data.pasien_kepulangan !== null ? data.pasien_kepulangan.created_by : profile?.nip,
+      updatedBy: profile?.nip,
     });
     setOpenModalPemulangan(true);
     setLoading(false)
@@ -255,11 +264,44 @@ export default function Pasien() {
   const saveInsertPulang = async (formDataPulang: any) => {
     // setLoading(true);
     console.log("INSERT PULANG formDataPulang: ", formDataPulang)
+    setLoading(true);
+    console.log("formDataPulang: ", formDataPulang)
+    const res = await fetch("/api/kepulangan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formDataPulang),
+    });
+    if (res.ok) {
+      setSuccessMessage("Sukses pemulangan pasien");
+      setLoading(false);
+      setOpenModalSuccess(true);
+    } else {
+      setFailedMessage("Gagal pemulangan pasien");
+      setOpenModalFailed(true);
+    }
+    closeModalPemulangan();
+    refreshTabelPasien();
   };
 
   const saveUpdatePulang = async (formDataPulang: any) => {
     // setLoading(true);
     console.log("UPDATE PULANG formDataPulang: ", formDataPulang)
+    setLoading(true);
+    const res = await fetch("/api/kepulangan", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formDataPulang),
+    });
+    if (res.ok) {
+      setSuccessMessage("Sukses memperbarui pemulangan pasien");
+      setLoading(false);
+      setOpenModalSuccess(true);
+    } else {
+      setFailedMessage("Gagal memperbarui pemulangan pasien");
+      setOpenModalFailed(true);
+    }
+    closeModalPemulangan();
+    refreshTabelPasien();
   };
 
   useEffect(() => {

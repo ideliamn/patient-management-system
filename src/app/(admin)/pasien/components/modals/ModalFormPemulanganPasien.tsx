@@ -18,6 +18,8 @@ interface FormDataPulangType {
     tgl_pulang?: string;
     waktu_pulang?: string;
     dokumen?: number[];
+    createdBy?: string;
+    updatedBy?: string;
 }
 
 interface ModalFormPemulanganPasienProps {
@@ -45,7 +47,9 @@ export default function ModalFormPemulanganPasien({
         kontak_penerima: "",
         tgl_pulang: "",
         waktu_pulang: "",
-        dokumen: []
+        dokumen: [],
+        createdBy: "",
+        updatedBy: ""
     });
 
     const [selectedDokumen, setSelectedDokumen] = useState<string[]>([]);
@@ -55,6 +59,10 @@ export default function ModalFormPemulanganPasien({
         if (initialData) {
             console.log("initialdata pemulangan: " + JSON.stringify(initialData))
             setFormDataPulang(initialData);
+
+            if (initialData.dokumen) {
+                setSelectedDokumen(initialData.dokumen.map((d) => d.toString()));
+            }
         } else {
             const now = new Date();
             const today = now.toISOString().split("T")[0];
@@ -68,7 +76,7 @@ export default function ModalFormPemulanganPasien({
                 kontak_penerima: "",
                 tgl_pulang: today,
                 waktu_pulang: timeNow,
-                dokumen: []
+                dokumen: [],
             });
             setSelectedDokumen([]);
         }
@@ -76,11 +84,19 @@ export default function ModalFormPemulanganPasien({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormDataPulang((prev) => ({ ...prev, [name]: name === "nama" ? value.toUpperCase() : value }));
+        setFormDataPulang((prev) => ({ ...prev, [name]: name === "nama_penerima" ? value.toUpperCase() : value }));
     };
 
     const handleClickSaveUpdate = () => {
-        initialData && initialData.id !== 0 ? handleUpdate(formDataPulang) : handleInsert(formDataPulang)
+        const finalData = {
+            ...formDataPulang,
+            dokumen: selectedDokumen.map((d) => Number(d))
+        };
+
+        initialData && initialData.id !== 0
+            ? handleUpdate(finalData)
+            : handleInsert(finalData);
+
         onClose();
     }
 

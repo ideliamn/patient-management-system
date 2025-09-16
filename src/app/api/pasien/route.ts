@@ -7,7 +7,7 @@ const supabase = createClient(
 );
 
 export async function GET() {
-  const { data, error } = await supabase.from("pasien").select("*, master_kamar(nama), pasien_kepulangan(*), pasien_dokumen(*)");
+  const { data, error } = await supabase.from("pasien").select("*, master_kamar(nama), pasien_kepulangan(*, profile:created_by(nama)), pasien_dokumen(id)");
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

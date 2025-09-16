@@ -58,8 +58,8 @@ export default function Pasien() {
     tgl_pulang: "",
     waktu_pulang: "",
     dokumen: [],
-    createdBy: profile?.nip,
-    updatedBy: profile?.nip
+    created_by: profile?.nip,
+    updated_by: profile?.nip
   });
 
   const [openModalAdd, setOpenModalAdd] = useState(false);
@@ -92,8 +92,8 @@ export default function Pasien() {
       tgl_pulang: "",
       waktu_pulang: "",
       dokumen: [],
-      createdBy: profile?.nip,
-      updatedBy: profile?.nip
+      created_by: profile?.nip,
+      updated_by: profile?.nip
     })
     setOpenModalPemulangan(false)
   };
@@ -171,6 +171,7 @@ export default function Pasien() {
     setLoading(true)
     const res = await fetch(`/api/pasien/${id}`);
     const data = await res.json();
+    console.log("data: " + JSON.stringify(data))
     const now = new Date();
     const today = now.toISOString().split("T")[0];
     const timeNow = now.toTimeString().slice(0, 5);
@@ -183,8 +184,8 @@ export default function Pasien() {
       tgl_pulang: data.pasien_kepulangan !== null ? data.pasien_kepulangan.tanggal_kepulangan.split("T")[0] : today,
       waktu_pulang: data.pasien_kepulangan !== null ? data.pasien_kepulangan.tanggal_kepulangan.split("T")[1].slice(0, 5) : timeNow,
       dokumen: data.pasien_dokumen.length > 0 ? data.pasien_dokumen.map((d: any) => d.dokumen_id) : [],
-      createdBy: data.pasien_kepulangan !== null ? data.pasien_kepulangan.created_by : profile?.nip,
-      updatedBy: profile?.nip,
+      created_by: data.pasien_kepulangan !== null ? data.pasien_kepulangan.profile.nama : profile?.nip,
+      updated_by: profile?.nip,
     });
     setOpenModalPemulangan(true);
     setLoading(false)

@@ -6,6 +6,7 @@ import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
+import { useProfile } from "@/context/ProfileContext";
 import { TimeIcon } from "@/icons";
 import { useEffect, useState } from "react";
 
@@ -18,8 +19,8 @@ interface FormDataPulangType {
     tgl_pulang?: string;
     waktu_pulang?: string;
     dokumen?: number[];
-    createdBy?: string;
-    updatedBy?: string;
+    created_by?: string;
+    updated_by?: string;
 }
 
 interface ModalFormPemulanganPasienProps {
@@ -48,10 +49,11 @@ export default function ModalFormPemulanganPasien({
         tgl_pulang: "",
         waktu_pulang: "",
         dokumen: [],
-        createdBy: "",
-        updatedBy: ""
+        created_by: "",
+        updated_by: ""
     });
 
+    const { profile } = useProfile();
     const [selectedDokumen, setSelectedDokumen] = useState<string[]>([]);
 
     useEffect(() => {
@@ -59,7 +61,6 @@ export default function ModalFormPemulanganPasien({
         if (initialData) {
             console.log("initialdata pemulangan: " + JSON.stringify(initialData))
             setFormDataPulang(initialData);
-
             if (initialData.dokumen) {
                 setSelectedDokumen(initialData.dokumen.map((d) => d.toString()));
             }
@@ -67,7 +68,6 @@ export default function ModalFormPemulanganPasien({
             const now = new Date();
             const today = now.toISOString().split("T")[0];
             const timeNow = now.toTimeString().slice(0, 5);
-
             setFormDataPulang({
                 id: 0,
                 nama_pasien: "",
@@ -92,11 +92,9 @@ export default function ModalFormPemulanganPasien({
             ...formDataPulang,
             dokumen: selectedDokumen.map((d) => Number(d))
         };
-
         initialData && initialData.id !== 0
             ? handleUpdate(finalData)
             : handleInsert(finalData);
-
         onClose();
     }
 
@@ -107,7 +105,6 @@ export default function ModalFormPemulanganPasien({
     };
 
     console.log("formdata pulang: " + JSON.stringify(formDataPulang))
-
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px] p-5 lg:p-10 transition-all duration-300">
@@ -146,6 +143,10 @@ export default function ModalFormPemulanganPasien({
             </div>
             <div className="grid grid-cols-1 gap-3 xl:grid-cols-2 py-3">
                 <div className="space-y-6">
+                    <Label>Nama PPJA</Label>
+                    <Input name="nama_ppja" type="text" placeholder="Nama PPJA" defaultValue={formDataPulang?.created_by} onChange={handleChange} disabled={true} />
+                </div>
+                <div className="space-y-6">
                     <Label>Dokumen</Label>
                     <div className="relative">
                         <div className="space-y-2">
@@ -158,7 +159,6 @@ export default function ModalFormPemulanganPasien({
                                 />
                             ))}
                         </div>
-
                     </div>
                 </div>
             </div>

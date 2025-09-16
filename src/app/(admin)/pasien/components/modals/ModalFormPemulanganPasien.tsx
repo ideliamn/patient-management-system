@@ -112,7 +112,7 @@ export default function ModalFormPemulanganPasien({
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-[1200px] p-5 lg:p-10 transition-all duration-300">
             <h4 className="font-semibold text-gray-800 mb-7 text-title-sm dark:text-white/90">
-                Pemulangan Pasien
+                {initialData && initialData.id !== 0 ? "Edit Pemulangan Pasien" : "Pulangkan Pasien"}
             </h4>
             <div className="grid grid-cols-1 gap-3 xl:grid-cols-2 py-3">
                 <div className="space-y-6">

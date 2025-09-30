@@ -8,10 +8,12 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import ModalFailed from "../modals/ModalFailed";
+import Loading from "../common/Loading";
 
 export default function SignInForm() {
   const router = useRouter();
   const { signIn } = useAuth()
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,11 +22,13 @@ export default function SignInForm() {
   const [failedMessage, setFailedMessage] = useState<string>("");
 
   const handleLogin = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
 
     const { error } = await signIn(email, password)
 
     if (error) {
+      setLoading(false);
       setFailedMessage(error.message ?? "Gagal login, silakan coba lagi");
       setOpenModalFailed(true);
     } else {
@@ -34,6 +38,7 @@ export default function SignInForm() {
 
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
+      {loading && <Loading />}
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">

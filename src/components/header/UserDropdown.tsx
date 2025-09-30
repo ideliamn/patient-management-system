@@ -16,6 +16,7 @@ export default function UserDropdown() {
   const router = useRouter()
   const [openModalInfo, setOpenModalInfo] = useState(false);
   const { profile } = useProfile();
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   useEffect(() => {
     console.log("user session: ", JSON.stringify(user))
@@ -34,6 +35,7 @@ export default function UserDropdown() {
   }
 
   const handleLogout = async () => {
+    setLogoutLoading(true);
     const { error } = await signOut()
     if (error) {
       console.log(error)
@@ -49,6 +51,7 @@ export default function UserDropdown() {
   return (
     <div className="relative">
       {loading && <Loading />}
+      {logoutLoading && <Loading />}
       {/* Modal Info */}
       {openModalInfo && (
         <ModalInfo

@@ -45,7 +45,6 @@ export default function TrendMasukPulangChart() {
                 return new Date(item.tanggal).toLocaleDateString('id-ID', options)
             }
         });
-
         setCategories(x_axis)
         setSeries([
             {

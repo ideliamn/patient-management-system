@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Pasien from "./pasien/page";
+import Dashboard from "./dashboard/page";
 
 export const metadata: Metadata = {
   title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
+    "PMS",
+  description: "Patient Management System",
 };
 
 export default function Ecommerce() {
@@ -29,7 +30,8 @@ export default function Ecommerce() {
     // </div>
 
     <div className="col-span-12 xl:col-span-7">
-      <Pasien />
+      {/* <Pasien /> */}
+      < Dashboard />
     </div>
     // </div> 
   );

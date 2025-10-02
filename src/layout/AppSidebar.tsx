@@ -16,6 +16,7 @@ import {
   PlugInIcon,
   TableIcon,
   UserCircleIcon,
+  UserIcon
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
 
@@ -30,7 +31,13 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    subItems: [{ name: "Pasien", path: "/", pro: false }],
+    path: "/dashboard"
+    // subItems: [{ name: "Pasien", path: "/", pro: false }],
+  },
+  {
+    icon: <UserIcon />,
+    name: "Pasien",
+    path: "/pasien",
   },
   {
     icon: <CalenderIcon />,

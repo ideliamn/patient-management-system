@@ -29,29 +29,29 @@ export default function SearchableSelect({
             placeholder={placeholder}
             isClearable
             isSearchable
-            // className={className}
-            styles={{
-                control: (base) => ({
-                    ...base,
-                    backgroundColor: "var(--tw-bg-dark-900)",
-                    borderRadius: "0.5rem",
-                    minHeight: "44px",
-                }),
-                menu: (base) => ({
-                    ...base,
-                    backgroundColor: "#111827",
-                    color: "white",
-                }),
-                option: (base, state) => ({
-                    ...base,
-                    backgroundColor: state.isSelected
-                        ? "#2563eb"
-                        : state.isFocused
-                            ? "#1f2937"
-                            : "#111827",
-                    color: "white",
-                }),
-            }}
+        // className={className}
+        // styles={{
+        //     control: (base) => ({
+        //         ...base,
+        //         backgroundColor: "var(--tw-bg-dark-900)",
+        //         borderRadius: "0.5rem",
+        //         minHeight: "44px",
+        //     }),
+        //     menu: (base) => ({
+        //         ...base,
+        //         backgroundColor: "#111827",
+        //         color: "white",
+        //     }),
+        //     option: (base, state) => ({
+        //         ...base,
+        //         backgroundColor: state.isSelected
+        //             ? "#2563eb"
+        //             : state.isFocused
+        //                 ? "#1f2937"
+        //                 : "#111827",
+        //         color: "white",
+        //     }),
+        // }}
         />
     );
 }

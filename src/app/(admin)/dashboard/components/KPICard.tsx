@@ -45,9 +45,9 @@ export default function KPICard() {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-            {loading && <LoadingPartial />}
             {/* Card Total Pasien */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 relative">
+                {loading && <LoadingPartial />}
                 <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
                     <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />
                 </div>
@@ -69,7 +69,8 @@ export default function KPICard() {
             </div>
 
             {/* Card Pasien Masuk Hari Ini */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 relative">
+                {loading && <LoadingPartial />}
                 <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
                     <UserCircleIcon className="text-gray-800 size-6 dark:text-white/90" />
                 </div>
@@ -91,7 +92,8 @@ export default function KPICard() {
             </div>
 
             {/* Card Pasien Pulang Hari Ini */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 relative">
+                {loading && <LoadingPartial />}
                 <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
                     <CheckCircleIcon className="text-gray-800 size-6 dark:text-white/90" />
                 </div>
@@ -113,7 +115,8 @@ export default function KPICard() {
             </div>
 
             {/* Bed Occupancy Rate */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 relative">
+                {loading && <LoadingPartial />}
                 <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
                     <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />
                 </div>

@@ -126,7 +126,7 @@ export default function DokumenKepulanganChart() {
     //     },
     // ];
     return (
-        <div className="max-w-full overflow-x-auto custom-scrollbar relative">
+            <div className="max-w-full overflow-x-auto custom-scrollbar relative">
             {loading && <LoadingPartial />}
             <div id="chartOne">
                 <ReactApexChart
